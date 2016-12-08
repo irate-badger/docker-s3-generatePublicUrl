@@ -1,0 +1,8 @@
+docker-s3-generatepublicurl:
+   image: iratebadger/docker-s3-generatepublicurl:latest
+   ports:
+    - 8082:80
+    - 446:443
+   environment:
+    - S3PROXY_AWS_ACCESS_KEY=ACCESSKEY11223344556
+    - S3PROXY_AWS_SECRET_KEY=SECRETKEY1122334455667788990011223344556
