@@ -23,7 +23,7 @@ def transform_path(path):
     try:
         bucket, file_path = _splitPaths(path)
         expire = int(request.args.get('expire', '60'))
-        print "Expiring after {time}".format(time=expire)
+        print "Expiring after {expire}".format(expire=expire)
         expiration = _calculate_expiration(expire)
         return _calculate(bucket, file_path, expiration)
     except AttributeError:
@@ -50,7 +50,7 @@ def _calculate_expiration(expire, current_time=int(time.time())):
 
 
 def _calculate(bucket, file_path, expiration):
-    url = "GET\n\n\n{time}\n/{file_path}".format(time=str(expiration), file_path=file_path)
+    url = "GET\n\n\n{expiration}\n/{file_path}".format(expiration=str(expiration), file_path=file_path)
     print "Generated {url} from {expiration} and {file_path}".format(url=url, expiration=expiration, file_path=file_path)
     print "Encoding url with {S3PROXY_AWS_SECRET_KEY}".format(S3PROXY_AWS_SECRET_KEY=S3PROXY_AWS_SECRET_KEY)
     h = hmac.new(S3PROXY_AWS_SECRET_KEY, url, hashlib.sha1)
