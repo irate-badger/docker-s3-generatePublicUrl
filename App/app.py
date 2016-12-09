@@ -11,6 +11,7 @@ app = flask.Flask(__name__)
 S3PROXY_AWS_ACCESS_KEY = os.environ['S3PROXY_AWS_ACCESS_KEY']
 S3PROXY_AWS_SECRET_KEY = os.environ['S3PROXY_AWS_SECRET_KEY']
 
+
 @app.route('/')
 def welcome_():
     return 'Try to provide a file that you would like encoding such as /mybucket/myfile'
@@ -20,10 +21,9 @@ def welcome_():
 def transform_path(path):
     try:
         bucket, file_path = _splitPaths(path)
-        expire = int(request.args.get('expire', '600'))
-        import time
-        time = _calculate_expiration(expire)
-        return _calculate(bucket, file_path, time)
+        expire = int(request.args.get('expire', '60'))
+        expiration = _calculate_expiration(expire)
+        return _calculate(bucket, file_path, expiration)
     except AttributeError:
         return "The path is not long enough, did we miss the bucket?"
 
