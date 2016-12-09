@@ -52,7 +52,7 @@ def _calculate_expiration(expire, current_time=-1):
 
 
 def _calculate(bucket, file_path, expiration):
-    url = "GET\n\n\n{expiration}\n/{file_path}".format(expiration=str(expiration), file_path=file_path)
+    url = "GET\n\n\n{expiration}\n/{bucket}/{file_path}".format(expiration=str(expiration), bucket=bucket, file_path=file_path)
     print "Generated {url} from {expiration} and {file_path}".format(url=url, expiration=expiration, file_path=file_path)
     print "Encoding url with {S3PROXY_AWS_SECRET_KEY}".format(S3PROXY_AWS_SECRET_KEY=S3PROXY_AWS_SECRET_KEY)
     h = hmac.new(S3PROXY_AWS_SECRET_KEY, url, hashlib.sha1)
@@ -61,7 +61,6 @@ def _calculate(bucket, file_path, expiration):
              "&Expires={expiration}&Signature={signature}"
     return s3_url.format(bucket=bucket, file_path=file_path, S3PROXY_AWS_ACCESS_KEY=S3PROXY_AWS_ACCESS_KEY,
                          expiration=expiration, signature=signature)
-
 
 if __name__ == '__main__':
     app.run()
