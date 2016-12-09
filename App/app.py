@@ -44,7 +44,7 @@ def _splitPaths(path):
 
 def _calculate_expiration(expire, current_time=int(time.time())):
     expiration = current_time + expire
-    print "Expiring after {expiration}, calcuated from {current_time} and {expire}"\
+    print "Expiring after {expiration}, calculated from {current_time} and {expire}"\
         .format(expiration=expiration, current_time=current_time, expire=expire)
     return expiration
 
