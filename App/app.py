@@ -19,9 +19,11 @@ def welcome_():
 
 @app.route('/<path:path>')
 def transform_path(path):
+    print "\n\n\n***Generating the encoded url"
     try:
         bucket, file_path = _splitPaths(path)
         expire = int(request.args.get('expire', '60'))
+        print "Expiring after {time}".format(time=expire)
         expiration = _calculate_expiration(expire)
         return _calculate(bucket, file_path, expiration)
     except AttributeError:
@@ -41,7 +43,10 @@ def _splitPaths(path):
 
 
 def _calculate_expiration(expire, current_time=int(time.time())):
-    return current_time + expire
+    expiration = current_time + expire
+    print "Expiring after {expiration}, calcuated from {current_time} and {expire}"\
+        .format(expiration=expiration, current_time=current_time, expire=expire)
+    return expiration
 
 
 def _calculate(bucket, file_path, time):
