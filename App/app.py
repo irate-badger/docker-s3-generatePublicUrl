@@ -5,11 +5,19 @@ import hashlib
 import urllib
 import time
 import os
+import argparse
+
 from flask import request
 app = flask.Flask(__name__)
 
-S3PROXY_AWS_ACCESS_KEY = os.environ['S3PROXY_AWS_ACCESS_KEY']
-S3PROXY_AWS_SECRET_KEY = os.environ['S3PROXY_AWS_SECRET_KEY']
+S3PROXY_AWS_ACCESS_KEY = ""
+S3PROXY_AWS_SECRET_KEY = ""
+
+if os.environ.get('S3PROXY_AWS_ACCESS_KEY') is not None:
+    S3PROXY_AWS_ACCESS_KEY = os.environ['S3PROXY_AWS_ACCESS_KEY']
+
+if os.environ.get('S3PROXY_AWS_SECRET_KEY') is not None:
+    S3PROXY_AWS_SECRET_KEY = os.environ['S3PROXY_AWS_SECRET_KEY']
 
 
 @app.route('/')
@@ -21,7 +29,7 @@ def welcome_():
 def transform_path(path):
     print "\n\n\n***Generating the encoded url"
     try:
-        bucket, file_path = _splitPaths(path)
+        bucket, file_path = _split_paths(path)
         expire = int(request.args.get('expire', '60'))
         print "Expiring after {expire}".format(expire=expire)
         expiration = _calculate_expiration(expire)
@@ -30,7 +38,7 @@ def transform_path(path):
         return "The path is not long enough, did we miss the bucket?"
 
 
-def _splitPaths(path):
+def _split_paths(path):
     paths = path.split("/")
     if len(paths) < 2:
         raise AttributeError
@@ -62,5 +70,20 @@ def _calculate(bucket, file_path, expiration):
     return s3_url.format(bucket=bucket, file_path=file_path, S3PROXY_AWS_ACCESS_KEY=S3PROXY_AWS_ACCESS_KEY,
                          expiration=expiration, signature=signature)
 
+
+def _arg_parse():
+    parser = argparse.ArgumentParser(description='Generate your own public, time limited S3 urls.')
+    parser.add_argument('-a', '--ACCESS_KEY', type=str, help='Your AWS access key',
+                        dest='AWS_ACCESS_KEY', required='True')
+    parser.add_argument('-s', '--SECRET_KEY', type=str, help='Your AWS secret key',
+                        dest='AWS_SECRET_KEY', required='True')
+
+    _parsed_args = parser.parse_args()
+    global S3PROXY_AWS_ACCESS_KEY, S3PROXY_AWS_SECRET_KEY
+    S3PROXY_AWS_ACCESS_KEY = _parsed_args.AWS_ACCESS_KEY
+    S3PROXY_AWS_SECRET_KEY = _parsed_args.AWS_SECRET_KEY
+
+
 if __name__ == '__main__':
+    _arg_parse()
     app.run()
